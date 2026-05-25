@@ -1,0 +1,1183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SEA Process Stream Map — Faham Group GASD</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: 'Segoe UI', Arial, sans-serif;
+    background: #0F1B2D;
+    color: #E2E8F0;
+    min-height: 100vh;
+    padding: 32px 24px 48px;
+  }
+
+  /* ── HEADER ── */
+  .header {
+    text-align: center;
+    margin-bottom: 40px;
+  }
+  .header-tag {
+    display: inline-block;
+    background: #5C2D91;
+    color: #fff;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    padding: 5px 16px;
+    border-radius: 20px;
+    margin-bottom: 12px;
+  }
+  .header h1 {
+    font-size: 28px;
+    font-weight: 800;
+    color: #fff;
+    line-height: 1.2;
+    margin-bottom: 8px;
+  }
+  .header h1 span { color: #F59E0B; }
+  .header p {
+    font-size: 13px;
+    color: #94A3B8;
+    max-width: 680px;
+    margin: 0 auto;
+  }
+  .meta-bar {
+    display: flex;
+    justify-content: center;
+    gap: 24px;
+    margin-top: 16px;
+    flex-wrap: wrap;
+  }
+  .meta-pill {
+    background: rgba(255,255,255,0.07);
+    border: 1px solid rgba(255,255,255,0.12);
+    border-radius: 20px;
+    padding: 4px 14px;
+    font-size: 11px;
+    color: #94A3B8;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+  }
+
+  /* ── PHASE LANES ── */
+  .stream-container {
+    max-width: 1300px;
+    margin: 0 auto;
+  }
+
+  /* Phase label strip */
+  .phase-strip {
+    display: grid;
+    grid-template-columns: 180px 1fr 1fr 1fr 1fr;
+    gap: 8px;
+    margin-bottom: 8px;
+  }
+  .phase-label {
+    background: transparent;
+  }
+  .phase-label.active {
+    background: var(--phase-color);
+    border-radius: 8px 8px 0 0;
+    padding: 8px 12px;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    color: #fff;
+    text-align: center;
+    text-transform: uppercase;
+  }
+
+  /* Main stream grid */
+  .stream-grid {
+    display: grid;
+    grid-template-columns: 180px 1fr 1fr 1fr 1fr;
+    gap: 8px;
+    align-items: start;
+  }
+
+  /* Row labels */
+  .row-label {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    padding-right: 12px;
+    min-height: 80px;
+  }
+  .row-label-text {
+    font-size: 10.5px;
+    font-weight: 700;
+    color: #64748B;
+    text-align: right;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    line-height: 1.4;
+  }
+
+  /* Swim lane row */
+  .lane-row {
+    display: contents;
+  }
+
+  /* Step card */
+  .step {
+    background: #1E2D42;
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 10px;
+    padding: 14px 14px 12px;
+    position: relative;
+    min-height: 80px;
+    transition: transform 0.15s, box-shadow 0.15s;
+  }
+  .step:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(0,0,0,0.4);
+  }
+  .step.highlight {
+    border-color: var(--step-color);
+    border-width: 1.5px;
+  }
+
+  /* Step accent top bar */
+  .step::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 3px;
+    background: var(--step-color, #00897B);
+    border-radius: 10px 10px 0 0;
+  }
+
+  .step-icon {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background: var(--step-color, #00897B);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    margin-bottom: 8px;
+    flex-shrink: 0;
+  }
+  .step-title {
+    font-size: 11.5px;
+    font-weight: 700;
+    color: #E2E8F0;
+    line-height: 1.3;
+    margin-bottom: 5px;
+  }
+  .step-detail {
+    font-size: 9.5px;
+    color: #94A3B8;
+    line-height: 1.5;
+  }
+  .step-tag {
+    display: inline-block;
+    margin-top: 7px;
+    background: var(--step-color, #00897B);
+    color: #fff;
+    font-size: 8.5px;
+    font-weight: 700;
+    padding: 2px 8px;
+    border-radius: 10px;
+    opacity: 0.9;
+    letter-spacing: 0.3px;
+  }
+
+  /* Connector arrows between phases */
+  .connector {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    color: #334155;
+    min-height: 80px;
+    padding: 0 4px;
+  }
+
+  /* Empty cell spacer */
+  .empty {
+    background: transparent;
+    border: none;
+    min-height: 40px;
+  }
+
+  /* Decision diamond */
+  .decision {
+    background: #1E2D42;
+    border: 1.5px solid #F59E0B;
+    border-radius: 10px;
+    padding: 12px;
+    text-align: center;
+    position: relative;
+  }
+  .decision::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 3px;
+    background: #F59E0B;
+    border-radius: 10px 10px 0 0;
+  }
+  .decision-icon { font-size: 18px; margin-bottom: 4px; }
+  .decision-title { font-size: 10.5px; font-weight: 700; color: #F59E0B; margin-bottom: 3px; }
+  .decision-text { font-size: 9px; color: #94A3B8; line-height: 1.4; }
+
+  /* Section dividers */
+  .section-divider {
+    grid-column: 1 / -1;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin: 20px 0 8px;
+  }
+  .section-divider-line { flex: 1; height: 1px; background: rgba(255,255,255,0.06); }
+  .section-divider-label {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: #475569;
+    white-space: nowrap;
+  }
+
+  /* ── SECOND SECTION: FORMS CHECKLIST FLOW ── */
+  .checklist-flow {
+    max-width: 1300px;
+    margin: 40px auto 0;
+  }
+  .section-title {
+    font-size: 16px;
+    font-weight: 800;
+    color: #fff;
+    margin-bottom: 6px;
+  }
+  .section-subtitle {
+    font-size: 12px;
+    color: #64748B;
+    margin-bottom: 20px;
+  }
+
+  .checklist-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 8px;
+    margin-bottom: 12px;
+  }
+
+  .section-card {
+    background: #1E2D42;
+    border: 1px solid rgba(255,255,255,0.07);
+    border-radius: 10px;
+    overflow: hidden;
+  }
+  .section-card-header {
+    padding: 10px;
+    text-align: center;
+    background: var(--sec-color);
+  }
+  .section-card-badge {
+    font-size: 16px;
+    font-weight: 800;
+    color: #fff;
+    display: block;
+  }
+  .section-card-qs {
+    font-size: 9px;
+    color: rgba(255,255,255,0.75);
+    font-weight: 600;
+    margin-top: 2px;
+  }
+  .section-card-body {
+    padding: 10px;
+  }
+  .section-card-title {
+    font-size: 10px;
+    font-weight: 700;
+    color: #E2E8F0;
+    margin-bottom: 5px;
+    line-height: 1.3;
+  }
+  .section-card-items {
+    list-style: none;
+  }
+  .section-card-items li {
+    font-size: 8.5px;
+    color: #94A3B8;
+    line-height: 1.5;
+    padding-left: 8px;
+    position: relative;
+    margin-bottom: 2px;
+  }
+  .section-card-items li::before {
+    content: '›';
+    position: absolute;
+    left: 0;
+    color: var(--sec-color);
+    font-weight: 700;
+  }
+  .score-bar {
+    padding: 6px 10px;
+    background: rgba(0,0,0,0.2);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .score-label { font-size: 8px; color: #64748B; }
+  .score-val { font-size: 10px; font-weight: 800; color: var(--sec-color); }
+
+  /* ── THIRD SECTION: AUTOMATION PIPELINE ── */
+  .auto-pipeline {
+    max-width: 1300px;
+    margin: 40px auto 0;
+  }
+  .pipeline-track {
+    display: flex;
+    align-items: stretch;
+    gap: 0;
+    background: #1E2D42;
+    border-radius: 12px;
+    overflow: hidden;
+    border: 1px solid rgba(255,255,255,0.07);
+    margin-bottom: 12px;
+  }
+  .pipeline-step {
+    flex: 1;
+    padding: 16px 14px;
+    border-right: 1px solid rgba(255,255,255,0.06);
+    position: relative;
+  }
+  .pipeline-step:last-child { border-right: none; }
+  .pipeline-step::after {
+    content: '›';
+    position: absolute;
+    right: -10px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 18px;
+    color: #334155;
+    z-index: 2;
+    font-weight: 700;
+  }
+  .pipeline-step:last-child::after { display: none; }
+  .pipeline-num {
+    width: 22px; height: 22px;
+    border-radius: 50%;
+    background: var(--pipe-color, #00897B);
+    color: #fff;
+    font-size: 10px;
+    font-weight: 800;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 8px;
+  }
+  .pipeline-title { font-size: 11px; font-weight: 700; color: #E2E8F0; margin-bottom: 4px; }
+  .pipeline-detail { font-size: 9px; color: #94A3B8; line-height: 1.5; }
+  .pipeline-tool {
+    display: inline-block;
+    margin-top: 6px;
+    font-size: 8px;
+    font-weight: 700;
+    color: var(--pipe-color, #00897B);
+    border: 1px solid var(--pipe-color, #00897B);
+    border-radius: 4px;
+    padding: 1px 6px;
+    letter-spacing: 0.3px;
+  }
+
+  /* Report contents grid */
+  .report-contents {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 8px;
+    margin-top: 16px;
+  }
+  .report-item {
+    background: #1E2D42;
+    border: 1px solid rgba(255,255,255,0.07);
+    border-radius: 8px;
+    padding: 10px 12px;
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+  }
+  .report-item-icon { color: #059669; font-size: 12px; margin-top: 1px; flex-shrink: 0; }
+  .report-item-text { font-size: 9.5px; color: #CBD5E1; line-height: 1.4; }
+
+  /* ── FOOTER ── */
+  .infographic-footer {
+    max-width: 1300px;
+    margin: 32px auto 0;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 10px;
+  }
+  .kpi-card {
+    background: #1E2D42;
+    border-radius: 10px;
+    padding: 14px;
+    text-align: center;
+    border: 1px solid rgba(255,255,255,0.07);
+  }
+  .kpi-val { font-size: 28px; font-weight: 800; color: var(--kpi-color, #F59E0B); }
+  .kpi-label { font-size: 10px; color: #64748B; margin-top: 3px; font-weight: 600; letter-spacing: 0.5px; text-transform: uppercase; }
+
+  /* Legend */
+  .legend {
+    max-width: 1300px;
+    margin: 24px auto 0;
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+  .legend-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 10px;
+    color: #64748B;
+  }
+  .legend-dot {
+    width: 10px; height: 10px;
+    border-radius: 50%;
+    background: var(--leg-color);
+    flex-shrink: 0;
+  }
+  .gasd-watermark {
+    text-align: center;
+    margin-top: 24px;
+    font-size: 10px;
+    color: #334155;
+    font-weight: 600;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+  }
+
+  /* ── PROCESS OWNER — dotted interaction style ── */
+  .step-dotted {
+    background: rgba(30,45,66,0.55);
+    border: 1.5px dashed #475569;
+    border-radius: 10px;
+    padding: 14px 14px 12px;
+    position: relative;
+    min-height: 80px;
+    transition: transform 0.15s, box-shadow 0.15s;
+  }
+  .step-dotted:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(0,0,0,0.3);
+  }
+  .step-dotted .step-icon { background: #334155; }
+  .step-dotted .step-title { color: #94A3B8; }
+  .step-dotted .step-tag {
+    background: transparent;
+    border: 1px dashed #475569;
+    color: #64748B;
+  }
+
+  /* ── ROLE CHIP ── */
+  .role-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 14px;
+    padding: 3px 10px;
+    font-size: 9.5px;
+    font-weight: 600;
+    color: #94A3B8;
+    margin: 2px 2px 0 0;
+  }
+  .role-chip.lead { border-color: #F59E0B; color: #F59E0B; background: rgba(245,158,11,0.08); }
+  .role-chip.auditor { border-color: #00897B; color: #00897B; background: rgba(0,137,123,0.08); }
+  .role-chip.support { border-color: #7C3AED; color: #7C3AED; background: rgba(124,58,237,0.08); }
+  .role-chip.manager { border-color: #0277BD; color: #0277BD; background: rgba(2,119,189,0.08); }
+  .role-chip.owner { border-color: #475569; color: #64748B; background: transparent; border-style: dashed; }
+
+  /* ── GOVERNANCE HIERARCHY ── */
+  .gov-section {
+    max-width: 1300px;
+    margin: 0 auto 32px;
+    display: grid;
+    grid-template-columns: 1fr 320px;
+    gap: 16px;
+    align-items: start;
+  }
+  .hierarchy-tree {
+    background: #1E2D42;
+    border: 1px solid rgba(255,255,255,0.07);
+    border-radius: 12px;
+    padding: 20px 24px;
+  }
+  .hierarchy-title {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: #475569;
+    margin-bottom: 18px;
+  }
+  .h-node {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 4px;
+  }
+  .h-node-dot {
+    width: 10px; height: 10px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+  .h-node-label { font-size: 11.5px; font-weight: 700; }
+  .h-node-sub { font-size: 9.5px; color: #64748B; font-weight: 400; margin-left: auto; }
+  .h-connector {
+    width: 2px;
+    height: 18px;
+    background: #1E3A5F;
+    margin-left: 4px;
+    margin-bottom: 4px;
+  }
+  .h-owner-box {
+    margin-top: 18px;
+    border: 1.5px dashed #334155;
+    border-radius: 8px;
+    padding: 10px 14px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .h-owner-label { font-size: 10px; color: #475569; font-weight: 700; }
+  .h-owner-sub { font-size: 9px; color: #334155; margin-top: 1px; }
+
+  /* Governance callout */
+  .gov-callout {
+    background: #1E2D42;
+    border: 1px solid rgba(255,255,255,0.07);
+    border-left: 3px solid #F59E0B;
+    border-radius: 10px;
+    padding: 18px 20px;
+  }
+  .gov-callout-title {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: #F59E0B;
+    margin-bottom: 14px;
+    display: flex;
+    align-items: center;
+    gap: 7px;
+  }
+  .gov-callout-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    margin-bottom: 10px;
+    font-size: 10px;
+    color: #94A3B8;
+    line-height: 1.5;
+  }
+  .gov-callout-item:last-child { margin-bottom: 0; }
+  .gov-bullet { color: #F59E0B; font-weight: 700; flex-shrink: 0; margin-top: 1px; }
+</style>
+</head>
+<body>
+
+<!-- ══════════════════════════════════════════════════════════════ HEADER -->
+<div class="header">
+  <div class="header-tag">PROCESS STREAM MAP</div>
+  <h1>SEA Checklist — <span>End-to-End Execution Flow</span></h1>
+  <p>From audit planning through Microsoft Forms submission to automated PDF report distribution — complete process stream with swim lanes, decision points, and automation pipeline.</p>
+  <div class="meta-bar">
+    <span class="meta-pill">GASD-IAF-001 v2.0</span>
+    <span class="meta-pill">IAF-SEA-001</span>
+    <span class="meta-pill">ISO 9001:2015</span>
+    <span class="meta-pill">Microsoft 365 Ecosystem</span>
+    <span class="meta-pill">Faham Group</span>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════ GOVERNANCE HIERARCHY -->
+<div class="stream-container" style="margin-bottom:0;">
+  <div class="section-divider">
+    <div class="section-divider-line"></div>
+    <div class="section-divider-label">⓪ Audit Team — Governance Hierarchy &amp; Roles</div>
+    <div class="section-divider-line"></div>
+  </div>
+  <div class="gov-section">
+    <!-- Hierarchy tree -->
+    <div class="hierarchy-tree">
+      <div class="hierarchy-title">Internal Audit Chain of Command</div>
+
+      <!-- Line Manager -->
+      <div class="h-node">
+        <div class="h-node-dot" style="background:#0277BD;width:13px;height:13px;box-shadow:0 0 0 3px rgba(2,119,189,0.2);"></div>
+        <div>
+          <div class="h-node-label" style="color:#0277BD;font-size:13px;">Line Manager</div>
+          <div style="font-size:9px;color:#475569;margin-top:1px;">Oversight only — approves scope, reviews output, governance sign-off</div>
+        </div>
+        <span class="role-chip manager" style="margin-left:auto;">Oversight</span>
+      </div>
+      <div class="h-connector"></div>
+
+      <!-- SIA 1 -->
+      <div class="h-node">
+        <div class="h-node-dot" style="background:#F59E0B;width:12px;height:12px;box-shadow:0 0 0 3px rgba(245,158,11,0.2);"></div>
+        <div>
+          <div class="h-node-label" style="color:#F59E0B;">Amro Gasim <span style="font-size:10px;font-weight:400;color:#64748B;">— Sr. Internal Auditor 1</span></div>
+          <div style="font-size:9px;color:#475569;margin-top:1px;">Owns audit conclusions · Determines scope, sampling &amp; severity · Issues CARs &amp; SEA report · Signs checklist declaration · Escalates critical findings within 24h</div>
+        </div>
+        <span class="role-chip lead" style="margin-left:auto;">Lead Auditor</span>
+      </div>
+      <div class="h-connector"></div>
+
+      <!-- SIA 2 -->
+      <div class="h-node">
+        <div class="h-node-dot" style="background:#00897B;width:11px;height:11px;box-shadow:0 0 0 3px rgba(0,137,123,0.2);"></div>
+        <div>
+          <div class="h-node-label" style="color:#00897B;">Solomon Diaz <span style="font-size:10px;font-weight:400;color:#64748B;">— Sr. Internal Auditor 2</span></div>
+          <div style="font-size:9px;color:#475569;margin-top:1px;">Co-leads SEA execution · Validates evidence sufficiency &amp; RCA logic · Conducts control observations &amp; testing · Applies severity override principle · Supports CAR drafting</div>
+        </div>
+        <span class="role-chip auditor" style="margin-left:auto;">Co-Lead Auditor</span>
+      </div>
+      <div class="h-connector"></div>
+
+      <!-- IA3 -->
+      <div class="h-node">
+        <div class="h-node-dot" style="background:#7C3AED;width:10px;height:10px;box-shadow:0 0 0 3px rgba(124,58,237,0.2);"></div>
+        <div>
+          <div class="h-node-label" style="color:#7C3AED;">Ahmad Hadidi <span style="font-size:10px;font-weight:400;color:#64748B;">— Internal Auditor 3</span></div>
+          <div style="font-size:9px;color:#475569;margin-top:1px;">Coordinates meetings &amp; logistics · Compiles &amp; indexes evidence · Maintains audit archive · Performs preliminary analytics · Facilitates auditee briefings · Does not influence findings or judgment</div>
+        </div>
+        <span class="role-chip support" style="margin-left:auto;">Support Auditor</span>
+      </div>
+
+      <!-- Process Owner — outside chain -->
+      <div class="h-owner-box">
+        <div style="border: 1.5px dashed #334155; border-radius:50%; width:32px;height:32px;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:15px;">🏢</div>
+        <div>
+          <div class="h-owner-label">Process Owner <span style="font-weight:400;color:#334155;">— Outside Audit Chain</span></div>
+          <div class="h-owner-sub">HOD or assigned Manager of audited department · Interacts via walkthrough, evidence provision &amp; exit meeting only</div>
+        </div>
+        <span class="role-chip owner" style="margin-left:auto;white-space:nowrap;">Audited Party</span>
+      </div>
+    </div>
+
+    <!-- Governance callout -->
+    <div class="gov-callout">
+      <div class="gov-callout-title">⚖ Governance &amp; Independence</div>
+      <div class="gov-callout-item">
+        <span class="gov-bullet">›</span>
+        Audit conclusions are owned by Lead Auditor Amro Gasim — validated jointly with Co-Lead Solomon Diaz — reviewed by Line Manager post-execution
+      </div>
+      <div class="gov-callout-item">
+        <span class="gov-bullet">›</span>
+        Management review occurs after audit execution — not during fieldwork
+      </div>
+      <div class="gov-callout-item">
+        <span class="gov-bullet">›</span>
+        Process Owner provides facts and evidence only — they do not approve, direct, or influence audit conclusions
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════ STREAM 1: AUDIT EXECUTION PHASES -->
+<div class="stream-container">
+
+  <div class="section-divider">
+    <div class="section-divider-line"></div>
+    <div class="section-divider-label">① Audit Execution Stream — 14-Day SEA Cycle</div>
+    <div class="section-divider-line"></div>
+  </div>
+
+  <!-- Phase header labels -->
+  <div style="display:grid; grid-template-columns:180px repeat(4,1fr); gap:8px; margin-bottom:4px;">
+    <div></div>
+    <div style="background:#1C2B4A;border-radius:8px 8px 0 0;padding:8px 10px;font-size:10px;font-weight:700;letter-spacing:1.5px;color:#F59E0B;text-align:center;text-transform:uppercase;">Phase 1<br><span style="font-size:9px;color:#64748B;font-weight:400;">Days 1–2</span></div>
+    <div style="background:#1C2B4A;border-radius:8px 8px 0 0;padding:8px 10px;font-size:10px;font-weight:700;letter-spacing:1.5px;color:#00897B;text-align:center;text-transform:uppercase;">Phase 2<br><span style="font-size:9px;color:#64748B;font-weight:400;">Days 3–6</span></div>
+    <div style="background:#1C2B4A;border-radius:8px 8px 0 0;padding:8px 10px;font-size:10px;font-weight:700;letter-spacing:1.5px;color:#7C3AED;text-align:center;text-transform:uppercase;">Phase 3<br><span style="font-size:9px;color:#64748B;font-weight:400;">Days 7–10</span></div>
+    <div style="background:#1C2B4A;border-radius:8px 8px 0 0;padding:8px 10px;font-size:10px;font-weight:700;letter-spacing:1.5px;color:#DC2626;text-align:center;text-transform:uppercase;">Phase 4<br><span style="font-size:9px;color:#64748B;font-weight:400;">Days 11–14</span></div>
+  </div>
+
+  <!-- LANE: Sr. Internal Auditor 1 — Lead Auditor -->
+  <div style="display:grid; grid-template-columns:180px repeat(4,1fr); gap:8px; margin-bottom:8px;">
+    <div class="row-label">
+      <div class="row-label-text" style="color:#F59E0B;">Amro Gasim<br><span style="font-size:9px;color:#F59E0B;font-weight:600;">Lead Auditor</span><br><span style="font-size:8px;color:#475569;font-weight:400;">Sr. IA 1</span></div>
+    </div>
+    <!-- P1 -->
+    <div class="step highlight" style="--step-color:#F59E0B;">
+      <div class="step-icon">📋</div>
+      <div class="step-title">Planning, Scope &amp; Opening Meeting</div>
+      <div class="step-detail">Define scope boundaries &amp; sampling approach. Review prior findings. Confirm VSM/trace-forward strategy. Chair opening meeting with Process Owner.</div>
+      <span class="step-tag">Forms: S1 + S2</span>
+    </div>
+    <!-- P2 -->
+    <div class="step highlight" style="--step-color:#00897B;">
+      <div class="step-icon">🔍</div>
+      <div class="step-title">Lead Walkthrough &amp; Process Interview</div>
+      <div class="step-detail">Lead VSM mapping and trace-forward. Conduct structured process owner interview (S2: Q6, Q8, Q10, Q12). Determine control design adequacy (S3: Q14, Q16, Q18, Q21).</div>
+      <span class="step-tag">Forms: S2 + S3</span>
+    </div>
+    <!-- P3 -->
+    <div class="step highlight" style="--step-color:#7C3AED;">
+      <div class="step-icon">✅</div>
+      <div class="step-title">Validate Evidence &amp; RCA</div>
+      <div class="step-detail">Validate evidence sufficiency from co-lead. Conduct 5-Why RCA on key findings (S6: Q45). Determine and apply severity override where applicable. Complete S5 Risk &amp; Compliance (Q31–Q38).</div>
+      <span class="step-tag">Forms: S5 + S6 RCA</span>
+    </div>
+    <!-- P4 -->
+    <div class="step highlight" style="--step-color:#DC2626;">
+      <div class="step-icon">📝</div>
+      <div class="step-title">Findings, CARs &amp; Exit Meeting</div>
+      <div class="step-detail">Determine severity of all findings. Issue CARs. Complete S7 Completion Page (Q47–Q54). Submit MS Forms. Sign checklist declaration. Lead exit meeting. Escalate Critical findings within 24h.</div>
+      <span class="step-tag">Forms: S7 → Submit + Sign-off</span>
+    </div>
+  </div>
+
+  <!-- LANE: Sr. Internal Auditor 2 — Co-Lead Auditor -->
+  <div style="display:grid; grid-template-columns:180px repeat(4,1fr); gap:8px; margin-bottom:8px;">
+    <div class="row-label">
+      <div class="row-label-text" style="color:#00897B;">Solomon Diaz<br><span style="font-size:9px;color:#00897B;font-weight:600;">Co-Lead Auditor</span><br><span style="font-size:8px;color:#475569;font-weight:400;">Sr. IA 2</span></div>
+    </div>
+    <!-- P1 -->
+    <div class="step" style="--step-color:#00897B;">
+      <div class="step-icon">📖</div>
+      <div class="step-title">Document Review &amp; System Check</div>
+      <div class="step-detail">Review SOPs, WIs, and Odoo controls. Verify version dates. Map system tools in use (S2: Q12). Identify control design gaps prior to walkthrough (S3: Q18, Q20).</div>
+      <span class="step-tag">Pre-walkthrough preparation</span>
+    </div>
+    <!-- P2 -->
+    <div class="step highlight" style="--step-color:#00897B;">
+      <div class="step-icon">👁</div>
+      <div class="step-title">Control Operation Observation</div>
+      <div class="step-detail">Independently observe control execution (S4: Q22 — witness, not ask). Question 2–3 team members on responsibilities (Q24). Verify exception tracking (Q26). Spot-check 3–5 records (Q28). Note comms barriers (Q30).</div>
+      <span class="step-tag">Forms: S4 — all questions</span>
+    </div>
+    <!-- P3 -->
+    <div class="step highlight" style="--step-color:#00897B;">
+      <div class="step-icon">🧪</div>
+      <div class="step-title">Control Testing &amp; Observation Notes</div>
+      <div class="step-detail">Test PO gates and Odoo approval flows (S3: Q20). Document walkthrough observations in full (S6: Q39, Q41). Note all gaps using CCCCC framework (Q43). Complete evidence adequacy check (Q42).</div>
+      <span class="step-tag">Forms: S3 system + S6 observations</span>
+    </div>
+    <!-- P4 -->
+    <div class="step" style="--step-color:#00897B;">
+      <div class="step-icon">📊</div>
+      <div class="step-title">Co-Sign CAR Classification</div>
+      <div class="step-detail">Review and validate all CAR severity classifications with Lead Auditor. Confirm RCA traceability. Attend exit meeting. Support SEA report finalisation.</div>
+      <span class="step-tag">CAR validation &amp; exit support</span>
+    </div>
+  </div>
+
+  <!-- LANE: Internal Auditor 3 — Support Auditor -->
+  <div style="display:grid; grid-template-columns:180px repeat(4,1fr); gap:8px; margin-bottom:8px;">
+    <div class="row-label">
+      <div class="row-label-text" style="color:#7C3AED;">Ahmad Hadidi<br><span style="font-size:9px;color:#7C3AED;font-weight:600;">Support Auditor</span><br><span style="font-size:8px;color:#475569;font-weight:400;">IA 3</span></div>
+    </div>
+    <!-- P1 -->
+    <div class="step" style="--step-color:#7C3AED;">
+      <div class="step-icon">📅</div>
+      <div class="step-title">Meeting Coordination &amp; Logistics</div>
+      <div class="step-detail">Coordinate opening meeting logistics. Prepare auditee briefing. Compile prior CAR register and rework trend data for team preparation. Set up MS Forms submission link.</div>
+      <span class="step-tag">Forms: S1 setup support</span>
+    </div>
+    <!-- P2 -->
+    <div class="step" style="--step-color:#7C3AED;">
+      <div class="step-icon">📎</div>
+      <div class="step-title">Evidence Capture &amp; Logging</div>
+      <div class="step-detail">Capture photo evidence (wide-context, close-up, document — 3 per finding). Upload to S6 (Q46). Log physical observations in real time. Does not score or classify findings.</div>
+      <span class="step-tag">Forms: S6 evidence upload (Q46)</span>
+    </div>
+    <!-- P3 -->
+    <div class="step highlight" style="--step-color:#7C3AED;">
+      <div class="step-icon">💻</div>
+      <div class="step-title">System Data Pull &amp; Evidence Index</div>
+      <div class="step-detail">Extract Odoo job records, system logs, and KPI trend data. Organise and index evidence file. Track CAR ageing and repeat NC patterns. Prepare preliminary analytics dashboard.</div>
+      <span class="step-tag">Evidence index + data pack</span>
+    </div>
+    <!-- P4 -->
+    <div class="step" style="--step-color:#7C3AED;">
+      <div class="step-icon">🗂</div>
+      <div class="step-title">Archive &amp; Closing Meeting Support</div>
+      <div class="step-detail">Archive submitted SEA checklist in GASD register. Coordinate closing meeting logistics. Prepare draft monthly audit data pack for Line Manager review.</div>
+      <span class="step-tag">Archive + data pack</span>
+    </div>
+  </div>
+
+  <!-- LANE: Process Owner — Audited Party (dotted — interaction only) -->
+  <div style="display:grid; grid-template-columns:180px repeat(4,1fr); gap:8px; margin-bottom:8px;">
+    <div class="row-label">
+      <div class="row-label-text" style="color:#475569;">Process Owner<br><span style="font-size:9px;color:#334155;font-weight:400;">Audited Party</span></div>
+    </div>
+    <!-- P1 — Opening meeting only -->
+    <div class="step-dotted">
+      <div class="step-icon">🤝</div>
+      <div class="step-title">Opening Meeting</div>
+      <div class="step-detail">Confirms audit access and team availability. Explains process to Lead Auditor.</div>
+      <span class="step-tag">Day 2 — attendance only</span>
+    </div>
+    <!-- P2 — Observation support -->
+    <div class="step-dotted">
+      <div class="step-icon">👥</div>
+      <div class="step-title">Available for Walkthrough</div>
+      <div class="step-detail">Department operates normally. Team members respond to direct questions from Auditor.</div>
+      <span class="step-tag">No coaching</span>
+    </div>
+    <!-- P3 — Records only -->
+    <div class="step-dotted">
+      <div class="step-icon">📁</div>
+      <div class="step-title">Evidence Provision</div>
+      <div class="step-detail">Provides records on request — job files, PO evidence, training records. Submitted as-is.</div>
+      <span class="step-tag">Facts only — no direction</span>
+    </div>
+    <!-- P4 — Formal response -->
+    <div class="step-dotted" style="border-color:#DC2626;opacity:0.85;">
+      <div class="step-icon" style="background:#7F1D1D;">✍️</div>
+      <div class="step-title" style="color:#FCA5A5;">Formal Response — Exit Meeting</div>
+      <div class="step-detail">Reviews findings. Provides agree / partially agree / disagree. Commits to CAR actions.</div>
+      <span class="step-tag" style="border-color:#7F1D1D;color:#FCA5A5;">Forms Q52–Q54</span>
+    </div>
+  </div>
+
+  <!-- LANE: Line Manager — Oversight -->
+  <div style="display:grid; grid-template-columns:180px repeat(4,1fr); gap:8px; margin-bottom:8px;">
+    <div class="row-label">
+      <div class="row-label-text" style="color:#0277BD;">Line Manager<br><span style="font-size:9px;color:#475569;font-weight:400;">Oversight</span></div>
+    </div>
+    <div class="step" style="--step-color:#0277BD;">
+      <div class="step-icon">✅</div>
+      <div class="step-title">Scope Approval</div>
+      <div class="step-detail">Confirms audit scope and programme. Maintains checklist version control.</div>
+      <span class="step-tag">Oversight only</span>
+    </div>
+    <div class="empty" style="background:#1E2D42;border-radius:10px;border:1px dashed rgba(255,255,255,0.04);min-height:80px;display:flex;align-items:center;justify-content:center;">
+      <span style="font-size:9px;color:#334155;font-style:italic;">Monitoring only</span>
+    </div>
+    <div class="step" style="--step-color:#0277BD;">
+      <div class="step-icon">🔔</div>
+      <div class="step-title">Critical Alert Response</div>
+      <div class="step-detail">Receives 24-hr notification from Lead Auditor if Critical NC identified. Activates escalation path.</div>
+      <span class="step-tag">24hr rule — if triggered</span>
+    </div>
+    <div class="step highlight" style="--step-color:#0277BD;">
+      <div class="step-icon">📋</div>
+      <div class="step-title">Governance Review &amp; Sign-Off</div>
+      <div class="step-detail">Reviews submitted SEA Checklist. Approves CAR issuance. Archives in GASD register. Signs CP12.</div>
+      <span class="step-tag">Post-execution — reviewer sign-off</span>
+    </div>
+  </div>
+
+  <!-- LANE: Microsoft Forms System -->
+  <div style="display:grid; grid-template-columns:180px repeat(4,1fr); gap:8px; margin-bottom:8px;">
+    <div class="row-label"><div class="row-label-text" style="color:#5C2D91;">MS Forms<br>System</div></div>
+    <div class="step" style="--step-color:#5C2D91;background:#1A1533;">
+      <div class="step-icon" style="background:#5C2D91;">📱</div>
+      <div class="step-title">Form Opens — S1 Header</div>
+      <div class="step-detail">Auditor completes Section 1 (Q1–Q5). Dept dropdown activates conditional logic for later sections.</div>
+    </div>
+    <div class="step" style="--step-color:#5C2D91;background:#1A1533;">
+      <div class="step-icon" style="background:#5C2D91;">🔄</div>
+      <div class="step-title">Sections 2–4 In Progress</div>
+      <div class="step-detail">Q6–Q30 completed progressively each day. Conditional free-text fields appear on No answers. Form auto-saves.</div>
+    </div>
+    <div class="step" style="--step-color:#5C2D91;background:#1A1533;">
+      <div class="step-icon" style="background:#5C2D91;">📎</div>
+      <div class="step-title">Sections 5–6 + Evidence Upload</div>
+      <div class="step-detail">Q31–Q46 completed. Evidence photos uploaded (up to 5 files). Observation notes recorded in full.</div>
+    </div>
+    <div class="step highlight" style="--step-color:#5C2D91;background:#1A1533;">
+      <div class="step-icon" style="background:#5C2D91;">📤</div>
+      <div class="step-title">Section 7 → SUBMIT</div>
+      <div class="step-detail">Completion Page finalised. Severity rating selected. Declaration confirmed. Form submitted — triggers automation.</div>
+      <span class="step-tag" style="background:#5C2D91;">Triggers Power Automate</span>
+    </div>
+  </div>
+
+</div>
+
+<!-- ══════════════════════════════════ STREAM 2: FORMS CHECKLIST STRUCTURE -->
+<div class="checklist-flow">
+  <div class="section-divider">
+    <div class="section-divider-line"></div>
+    <div class="section-divider-label">② MS Forms Checklist Structure — 7 Sections · 20 Points Total</div>
+    <div class="section-divider-line"></div>
+  </div>
+
+  <div class="checklist-grid">
+    <!-- S1 -->
+    <div class="section-card" style="--sec-color:#5C2D91;">
+      <div class="section-card-header">
+        <span class="section-card-badge">S1</span>
+        <div class="section-card-qs">Q1–Q5 · Header</div>
+      </div>
+      <div class="section-card-body">
+        <div class="section-card-title">Audit Information</div>
+        <ul class="section-card-items">
+          <li>Department (dropdown)</li>
+          <li>Walkthrough date</li>
+          <li>Lead Auditor name</li>
+          <li>Process Owner name</li>
+          <li>Audit reference no.</li>
+        </ul>
+      </div>
+      <div class="score-bar">
+        <span class="score-label">Score</span>
+        <span class="score-val">—</span>
+      </div>
+    </div>
+    <!-- S2 -->
+    <div class="section-card" style="--sec-color:#00897B;">
+      <div class="section-card-header">
+        <span class="section-card-badge">S2</span>
+        <div class="section-card-qs">Q6–Q13 · 4 pts</div>
+      </div>
+      <div class="section-card-body">
+        <div class="section-card-title">Process Understanding</div>
+        <ul class="section-card-items">
+          <li>Process documented? (Q6)</li>
+          <li>Objectives communicated? (Q8)</li>
+          <li>Owner explains workflow? (Q10)</li>
+          <li>Systems/tools in use? (Q12)</li>
+        </ul>
+      </div>
+      <div class="score-bar">
+        <span class="score-label">Max Score</span>
+        <span class="score-val">4 pts</span>
+      </div>
+    </div>
+    <!-- S3 -->
+    <div class="section-card" style="--sec-color:#0277BD;">
+      <div class="section-card-header">
+        <span class="section-card-badge">S3</span>
+        <div class="section-card-qs">Q14–Q21 · 4 pts</div>
+      </div>
+      <div class="section-card-body">
+        <div class="section-card-title">Control Design</div>
+        <ul class="section-card-items">
+          <li>Key controls in place? (Q14)</li>
+          <li>Segregation of duties? (Q16)</li>
+          <li>Controls documented? (Q18)</li>
+          <li>System controls (Odoo)? (Q20)</li>
+          <li>Escalation procedures? (Q21)</li>
+        </ul>
+      </div>
+      <div class="score-bar">
+        <span class="score-label">Max Score</span>
+        <span class="score-val">4 pts</span>
+      </div>
+    </div>
+    <!-- S4 -->
+    <div class="section-card" style="--sec-color:#7C3AED;">
+      <div class="section-card-header">
+        <span class="section-card-badge">S4</span>
+        <div class="section-card-qs">Q22–Q30 · 4 pts</div>
+      </div>
+      <div class="section-card-body">
+        <div class="section-card-title">Control Operation</div>
+        <ul class="section-card-items">
+          <li>Controls witnessed? (Q22) ★</li>
+          <li>Performers aware? (Q24)</li>
+          <li>Exceptions tracked? (Q26)</li>
+          <li>Docs complete? (Q28)</li>
+          <li>Comms barriers? (Q30)</li>
+        </ul>
+      </div>
+      <div class="score-bar">
+        <span class="score-label">Max Score</span>
+        <span class="score-val">4 pts</span>
+      </div>
+    </div>
+    <!-- S5 -->
+    <div class="section-card" style="--sec-color:#DC2626;">
+      <div class="section-card-header">
+        <span class="section-card-badge">S5</span>
+        <div class="section-card-qs">Q31–Q38 · 4 pts</div>
+      </div>
+      <div class="section-card-body">
+        <div class="section-card-title">Risk & Compliance</div>
+        <ul class="section-card-items">
+          <li>Risk register exists? (Q31)</li>
+          <li>Regulatory met? (Q33)</li>
+          <li>SOPs followed? (Q35)</li>
+          <li>Mgmt aware of gaps? (Q37)</li>
+          <li>Customer complaints? (Q38)</li>
+        </ul>
+      </div>
+      <div class="score-bar">
+        <span class="score-label">Max Score</span>
+        <span class="score-val">4 pts</span>
+      </div>
+    </div>
+    <!-- S6 -->
+    <div class="section-card" style="--sec-color:#D97706;">
+      <div class="section-card-header">
+        <span class="section-card-badge">S6</span>
+        <div class="section-card-qs">Q39–Q46 · 4 pts</div>
+      </div>
+      <div class="section-card-body">
+        <div class="section-card-title">Observations & Evidence</div>
+        <ul class="section-card-items">
+          <li>Walkthrough documented? (Q39)</li>
+          <li>Obs. notes — always req. (Q41)</li>
+          <li>Gaps noted w/ CCCCC? (Q43)</li>
+          <li>RCA (5-Why) done? (Q45)</li>
+          <li>Photos uploaded (Q46)</li>
+        </ul>
+      </div>
+      <div class="score-bar">
+        <span class="score-label">Max Score</span>
+        <span class="score-val">4 pts</span>
+      </div>
+    </div>
+    <!-- S7 -->
+    <div class="section-card" style="--sec-color:#1C2B4A;border:1px solid #475569;">
+      <div class="section-card-header" style="background:#1C2B4A;border-bottom:1px solid #475569;">
+        <span class="section-card-badge" style="color:#94A3B8;">S7</span>
+        <div class="section-card-qs" style="color:rgba(255,255,255,0.4);">Q47–Q54 · No score</div>
+      </div>
+      <div class="section-card-body">
+        <div class="section-card-title">Completion & Sign-Off</div>
+        <ul class="section-card-items">
+          <li>Key findings (min 3) (Q47)</li>
+          <li>Areas of concern (Q49)</li>
+          <li>Strengths (min 1) (Q50)</li>
+          <li>Severity rating (Q52)</li>
+          <li>Auditor declaration (Q54)</li>
+        </ul>
+      </div>
+      <div class="score-bar">
+        <span class="score-label">Administrative close-out</span>
+        <span class="score-val" style="color:#475569;">—</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Score totals bar -->
+  <div style="display:flex;gap:12px;align-items:center;justify-content:flex-end;margin-top:6px;flex-wrap:wrap;">
+    <div style="font-size:10px;color:#64748B;">Total: <strong style="color:#F59E0B;">20 points</strong></div>
+    <div style="display:flex;gap:6px;">
+      <span style="background:#059669;color:#fff;font-size:9px;font-weight:700;padding:3px 10px;border-radius:10px;">≥80% = PASS</span>
+      <span style="background:#D97706;color:#fff;font-size:9px;font-weight:700;padding:3px 10px;border-radius:10px;">60–79% = CONDITIONAL</span>
+      <span style="background:#DC2626;color:#fff;font-size:9px;font-weight:700;padding:3px 10px;border-radius:10px;">&lt;60% = FAIL → Escalate</span>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════ STREAM 3: AUTOMATION PIPELINE -->
+<div class="auto-pipeline">
+  <div class="section-divider">
+    <div class="section-divider-line"></div>
+    <div class="section-divider-label">③ Automated Report Pipeline — MS Forms → PDF Report → Distribution</div>
+    <div class="section-divider-line"></div>
+  </div>
+
+  <!-- Path A — Official -->
+  <div style="margin-bottom:6px;display:flex;align-items:center;gap:10px;">
+    <span style="background:#5C2D91;color:#fff;font-size:9px;font-weight:700;padding:3px 12px;border-radius:4px;letter-spacing:0.5px;">OFFICIAL PATHWAY</span>
+    <span style="font-size:9.5px;color:#475569;">Power Automate + Word Template + SharePoint · No-code · Fully within Microsoft 365</span>
+  </div>
+  <div class="pipeline-track" style="margin-bottom:20px;">
+    <div class="pipeline-step" style="--pipe-color:#5C2D91;">
+      <div class="pipeline-num">1</div>
+      <div class="pipeline-title">Form Submitted</div>
+      <div class="pipeline-detail">Auditor completes all 7 sections and submits SEA checklist in MS Forms</div>
+      <span class="pipeline-tool">MS Forms</span>
+    </div>
+    <div class="pipeline-step" style="--pipe-color:#0277BD;">
+      <div class="pipeline-num">2</div>
+      <div class="pipeline-title">Power Automate Trigger</div>
+      <div class="pipeline-detail">Flow fires instantly on "When a new response is submitted" event</div>
+      <span class="pipeline-tool">Power Automate</span>
+    </div>
+    <div class="pipeline-step" style="--pipe-color:#0277BD;">
+      <div class="pipeline-num">3</div>
+      <div class="pipeline-title">Get Response Details</div>
+      <div class="pipeline-detail">Connector retrieves all field values — including free-text, scores, and file attachments</div>
+      <span class="pipeline-tool">Forms Connector</span>
+    </div>
+    <div class="pipeline-step" style="--pipe-color:#00897B;">
+      <div class="pipeline-num">4</div>
+      <div class="pipeline-title">Populate Word Template</div>
+      <div class="pipeline-detail">Values mapped into a pre-built .docx with content controls — scoring table auto-calculates</div>
+      <span class="pipeline-tool">Word Connector</span>
+    </div>
+    <div class="pipeline-step" style="--pipe-color:#00897B;">
+      <div class="pipeline-num">5</div>
+      <div class="pipeline-title">Convert to PDF</div>
+      <div class="pipeline-detail">Word → PDF conversion action applied. Generates the final SEA Audit Report PDF</div>
+      <span class="pipeline-tool">Convert Action</span>
+    </div>
+    <div class="pipeline-step" style="--pipe-color:#059669;">
+      <div class="pipeline-num">6</div>
+      <div class="pipeline-title">Save to SharePoint</div>
+      <div class="pipeline-detail">PDF saved to GASD audit register folder: /GASD/Audits/[Dept]/[Month]</div>
+      <span class="pipeline-tool">SharePoint</span>
+    </div>
+    <div class="pipeline-step" style="--pipe-color:#059669;">
+      <div class="pipeline-num">7</div>
+      <div class="pipeline-title">Email Notification</div>
+      <div class="pipeline-detail">PDF emailed to Line Manager + HOD of audited dept. CARs flagged in subject line if severity ≥ Major</div>
+      <span class="pipeline-tool">Outlook Connector</span>
+    </div>
+  </div>
+
+  <!-- Report must contain -->
+  <div style="background:#1E2D42;border:1px solid rgba(255,255,255,0.07);border-radius:10px;padding:16px;">
+    <div style="font-size:10px;font-weight:700;letter-spacing:1.5px;color:#F59E0B;text-transform:uppercase;margin-bottom:12px;">What the Auto-Generated PDF Report Must Contain</div>
+    <div class="report-contents">
+      <div class="report-item"><span class="report-item-icon">✓</span><span class="report-item-text">Audit header — dept, date, ref no., auditor names</span></div>
+      <div class="report-item"><span class="report-item-icon">✓</span><span class="report-item-text">Section scores table (S2–S7) + total % and pass/fail status</span></div>
+      <div class="report-item"><span class="report-item-icon">✓</span><span class="report-item-text">Pass/Fail status with colour indicator (green / amber / red)</span></div>
+      <div class="report-item"><span class="report-item-icon">✓</span><span class="report-item-text">Numbered findings with checklist reference codes (e.g. CD4, CO3)</span></div>
+      <div class="report-item"><span class="report-item-icon">✓</span><span class="report-item-text">CAR count + severity distribution (Critical / Major / Minor / OFI)</span></div>
+      <div class="report-item"><span class="report-item-icon">✓</span><span class="report-item-text">Process owner response — agree / partially agree / disagree</span></div>
+      <div class="report-item"><span class="report-item-icon">✓</span><span class="report-item-text">Auditor declaration + reviewer (Line Manager) sign-off block</span></div>
+      <div class="report-item"><span class="report-item-icon">✓</span><span class="report-item-text">Follow-up date and open corrective action list with deadlines</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════ FOOTER KPIs -->
+<div class="infographic-footer">
+  <div class="kpi-card" style="--kpi-color:#F59E0B;">
+    <div class="kpi-val">20</div>
+    <div class="kpi-label">Total Scoreable Points</div>
+  </div>
+  <div class="kpi-card" style="--kpi-color:#00897B;">
+    <div class="kpi-val">7</div>
+    <div class="kpi-label">Checklist Sections</div>
+  </div>
+  <div class="kpi-card" style="--kpi-color:#7C3AED;">
+    <div class="kpi-val">14</div>
+    <div class="kpi-label">Audit Days (SEA)</div>
+  </div>
+  <div class="kpi-card" style="--kpi-color:#DC2626;">
+    <div class="kpi-val">24h</div>
+    <div class="kpi-label">Critical Escalation Window</div>
+  </div>
+</div>
+
+<!-- Legend -->
+<div class="legend">
+  <div class="legend-item"><div class="legend-dot" style="--leg-color:#F59E0B;"></div>Sr. IA 1 — Lead Auditor</div>
+  <div class="legend-item"><div class="legend-dot" style="--leg-color:#00897B;"></div>Sr. IA 2 — Auditor</div>
+  <div class="legend-item"><div class="legend-dot" style="--leg-color:#7C3AED;"></div>IA 3 — Support Auditor</div>
+  <div class="legend-item"><div class="legend-dot" style="--leg-color:#0277BD;"></div>Line Manager — Oversight</div>
+  <div class="legend-item"><div class="legend-dot" style="--leg-color:#475569;border:1.5px dashed #475569;background:transparent;"></div>Process Owner — Audited Party</div>
+  <div class="legend-item"><div class="legend-dot" style="--leg-color:#5C2D91;"></div>Microsoft Forms System</div>
+  <div class="legend-item"><div class="legend-dot" style="--leg-color:#059669;"></div>Automated Output</div>
+</div>
+
+<div class="gasd-watermark" style="margin-top:24px;">
+  GASD — Faham Group · GASD-IAF-001 v2.0 · IAF-SEA-001 · System Effectiveness Audit Process Stream Map
+</div>
+
+</body>
+</html>
